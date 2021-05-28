@@ -9,3 +9,4 @@ export { default as AdminRoute } from './auth/AdminRoute'
 export { default as AdminDashBoard } from './user/AdminDashBoard'
 export { default as AddCategory } from './admin/AddCategory';
 export { default as AddProduct } from './admin/AddProduct';
+export { default as Shop } from './core/Shop'

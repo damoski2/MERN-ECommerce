@@ -198,7 +198,7 @@ exports.listBySearch =(req,res)=>{
     for(let key in req.body.filters){
         if(req.body.filters[key].length > 0){
             if(key === "price"){
-                //gte = greater than price [0-10]
+                //gte = greater than price [0,10]
                 //lte = less than
                 findArgs[key] = {
                     $gte: req.body.filters[key][0],
@@ -233,7 +233,7 @@ exports.listBySearch =(req,res)=>{
 exports.photo = (req,res,next)=>{
     if(req.product.photo.data){
         res.set("Content-Type", req.product.photo.contentType);
-        return res.send(req.product.photo.data)
+        return res.send(req.product.photo.data)        //Cant be res.json() because photo is not a json data type
         next();
     }
 }
