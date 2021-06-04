@@ -154,6 +154,31 @@ exports.list = (req,res)=>{
         })
 }
 
+
+exports.listSearch = (req,res)=>{
+    //create query object to hold search value and category value
+    const query = {}
+    //assign search value to query name
+    if(req.query.search){
+        query.name = {$regex: req.query.search, $options: 'i'}
+        //assigne category value to query.category
+        if(req.query.category && req.query.category != 'All'){
+            query.category = req.query.category
+        }
+
+        //find the product based on query object with 2 properties i.e search and category
+        Product.find(query,(err,products)=>{
+            if(err){
+                return res.status(400).json({
+                    error: errorHandler(err)
+                })
+            }
+
+            res.json(products)
+        }).select("-photo")
+    }
+}
+
 /**
  * It will find the products based on the request product category
  * other product that has the same category will be returned
@@ -189,10 +214,10 @@ exports.listCategories = (req,res)=>{
 
 
 exports.listBySearch =(req,res)=>{
-    let order = req.query.order? req.query.order : "desc";
-    let sortBy = req.query.sortBy? req.query.sortBy : "_id";
-    let limit = req.query.limit? parseInt(req.query.limit) : 100;
-    let skip =  parseInt(req.query.skip);
+    let order = req.body.order? req.body.order : "desc";
+    let sortBy = req.body.sortBy? req.body.sortBy : "_id";
+    let limit = req.body.limit? parseInt(req.body.limit) : 100;
+    let skip =  parseInt(req.body.skip);
     let findArgs = {};
 
     for(let key in req.body.filters){
