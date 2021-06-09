@@ -10,3 +10,5 @@ export { default as AdminDashBoard } from './user/AdminDashBoard'
 export { default as AddCategory } from './admin/AddCategory';
 export { default as AddProduct } from './admin/AddProduct';
 export { default as Shop } from './core/Shop'
+export { default as Product } from './core/Product';
+export { default as Cart } from './core/Cart'

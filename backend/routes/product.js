@@ -28,6 +28,6 @@ router.post("/products/by/search", listBySearch);
 router.get("/product/photos/:productId", photo)
 
 router.param("userId", userById);
-router.param("productId", productById)
+router.param("productId", productById);
 
 module.exports = router;

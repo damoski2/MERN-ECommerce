@@ -1,6 +1,6 @@
 import react from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import{ SignIn, SignUp, Home, Menu, PrivateRoute, UserDashBoard, AdminRoute, AdminDashBoard, AddCategory, AddProduct, Shop } from './imports';
+import{ SignIn, SignUp, Home, Menu, PrivateRoute, UserDashBoard, AdminRoute, AdminDashBoard, AddCategory, AddProduct, Shop, Product, Cart } from './imports';
 
 const Routes = ()=>{
     return(
@@ -14,6 +14,8 @@ const Routes = ()=>{
                 <AdminRoute path="/admin/dashboard" component={AdminDashBoard} />
                 <AdminRoute path="/create/category" component={AddCategory} />
                 <AdminRoute path="/create/product" component={AddProduct} />
+                <Route path="/product/:productId" component={Product} />               {/*Watch out for this in packachange cant access react router props in \"render\" version of declaration*/}
+                <Route path="/cart" component={Cart} />  
             </Switch>
         </BrowserRouter>
     )
