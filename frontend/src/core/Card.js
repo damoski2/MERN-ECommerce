@@ -10,6 +10,8 @@ export const Card = ({
   showAddtoCartBtn = true,
   cartUpdate = false,
   showremoveProductBtn = false,
+  setRun = f =>f,
+  run= undefined
 }) => {
   const [redirect, setRedirect] = useState(false);
   const [count, setCount] = useState(product.count);
@@ -40,7 +42,10 @@ export const Card = ({
     return (
       showremoveProductBtn && (
         <button
-          onClick={()=> removeItem(product._id) }
+          onClick={()=> {
+            removeItem(product._id)
+            setRun(!run)
+          } }
           className="btn btn-outline-danger mt-2 mb-2 ml-2"
         >
           Remove Product
@@ -70,6 +75,7 @@ export const Card = ({
   };
 
   const handleChange = (productId) => (event) => {
+    setRun(!run);
     setCount(event.target.value < 1 ? 1 : event.target.value);
     if (event.target.value >= 1) {
       updateItem(productId, event.target.value);
