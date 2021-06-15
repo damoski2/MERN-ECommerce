@@ -12,3 +12,4 @@ export { default as AddProduct } from './admin/AddProduct';
 export { default as Shop } from './core/Shop'
 export { default as Product } from './core/Product';
 export { default as Cart } from './core/Cart'
+export { default as Orders } from './admin/Orders';
