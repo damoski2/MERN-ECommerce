@@ -5,7 +5,9 @@ const Product = require('../models/product');
 const { errorHandler } = require('../helpers/dbErrorHandler');
 
 exports.productById = (req,res,next,id)=>{
-    Product.findById(id).exec((err, product)=>{
+    Product.findById(id)
+    .populate("category")
+    .exec((err, product)=>{
         if(err || !product){
             return res.status(400).json({
                 error: 'Product Not found'
@@ -261,4 +263,24 @@ exports.photo = (req,res,next)=>{
         return res.send(req.product.photo.data)        //Cant be res.json() because photo is not a json data type
         next();
     }
+}
+
+exports.decreseQuantity = (req,res,next)=>{
+    let bulkOps = req.body.order.products.map((item)=>{
+        return {
+            updateOne: {
+                filter: { _id: item._id },
+                update: {$inc: {quantity: -item.count, sold: +item.count } }
+            }
+        }
+    });
+
+    Product.bulkWrite(bulkOps, {},(err,products)=>{
+        if(err){
+            return res.status(400).json({
+                error: 'Could not update product'
+            })
+        }
+        next();
+    })
 }
