@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../core/Layout";
 import { isAuthenticated } from "../auth/index";
-import { createProduct, getCategories } from "./apiAdmin";
-import { Link } from "react-router-dom";
+import { getProduct, getCategories, updateProduct } from "./apiAdmin";
+import { Link, Redirect } from "react-router-dom";
 
-const AddProduct = () => {
+const UpdateProduct = ({ match }) => {
   const [values, setValues] = useState({
     name: "",
     description: "",
@@ -40,19 +40,41 @@ const AddProduct = () => {
     formData,
   } = values;
 
+  const init = (productId) => {
+    getProduct(productId).then((data) => {
+      if (data.error) {
+        setValues({ ...values, error: data.error });
+      } else {
+        //populate the state
+        setValues({
+          ...values,
+          name: data.name,
+          description: data.description,
+          price: data.price,
+          category: data.category,
+          shipping: data.shipping,
+          quantity: data.quantity,
+          formData: new FormData()
+        });
+        //load Categories
+        initCategories();
+      }
+    });
+  };
+
   //load categories and set form data
-  const init = () => {
+  const initCategories = () => {
     getCategories().then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error });
       } else {
-        setValues({ ...values, categories: data, formData: new FormData() });
+        setValues({  categories: data, formData: new FormData() });
       }
     });
   };
 
   useEffect(() => {
-    init();
+    init(match.params.productId);
   }, []);
 
   const handleChange = (name) => (event) => {
@@ -61,13 +83,13 @@ const AddProduct = () => {
     setValues({ ...values, [name]: value });
   };
 
-  const clickSubmit = (event) =>{
+  const clickSubmit = (event) => {
     event.preventDefault();
     setValues({ ...values, error: "", loading: true });
 
-    console.log(formData)
+    console.log(formData);
 
-     createProduct(user._id, token, formData).then((data) => {
+    updateProduct( match.params.productId, user._id, token, formData).then((data) => {
       if (data.error) {
         setValues({ ...values, error: data.error });
       } else {
@@ -79,10 +101,12 @@ const AddProduct = () => {
           price: "",
           quantity: "",
           loading: false,
+          redirectToProfile: true,
           createdProduct: data.name,
+          error: false
         });
       }
-    }); 
+    });
   };
 
   const newPostForm = () => (
@@ -161,27 +185,42 @@ const AddProduct = () => {
         />
       </div>
 
-      <button className="btn btn-outline-primary">Create Product</button>
+      <button className="btn btn-outline-primary">Update Product</button>
     </form>
   );
 
-  const showError = ()=>(
-    <div className="alert alert-danger" style={{display: error?'':'none'}} >{error}</div>
-  )
-
-  const showSuccess = ()=>(
-    <div className="alert alert-info" style={{display: createdProduct?'':'none'}} >
-      <h2>{`${createdProduct} is created!`}</h2>
+  const showError = () => (
+    <div
+      className="alert alert-danger"
+      style={{ display: error ? "" : "none" }}
+    >
+      {error}
     </div>
-  )
+  );
 
-  const showLoading = ()=>(
-   loading&&(
-      <div className="alert alert-success" >
+  const showSuccess = () => (
+    <div
+      className="alert alert-info"
+      style={{ display: createdProduct ? "" : "none" }}
+    >
+      <h2>{`${createdProduct} is updated!`}</h2>
+    </div>
+  );
+
+  const redirectUser = ()=>{
+      if(redirectToProfile){
+          if(!error){
+              return <Redirect to="/" />
+          }
+      }
+  }
+
+  const showLoading = () =>
+    loading && (
+      <div className="alert alert-success">
         <h2>Loading...</h2>
       </div>
-   )
-  )
+    );
 
   return (
     <Layout
@@ -193,11 +232,12 @@ const AddProduct = () => {
           {showLoading()}
           {showSuccess()}
           {showError()}
-          {newPostForm()} 
+          {newPostForm()}
+          {redirectUser()}
         </div>
       </div>
     </Layout>
   );
 };
 
-export default AddProduct;
+export default UpdateProduct;
